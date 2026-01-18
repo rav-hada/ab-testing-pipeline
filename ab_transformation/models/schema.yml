@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: mart_ab_test
+    columns:
+      - name: experiment_group
+        tests:
+          - unique
+          - not_null
+      - name: conversion_rate
+        tests:
+          - not_null

@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: warehouse  # We call our database "warehouse"
+    database: warehouse
+    schema: public
+    tables:
+      - name: raw_ad_clicks  # This must match the Postgres table name exactly
+        description: "Raw clickstream data from the ad server"
