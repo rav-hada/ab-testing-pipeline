@@ -35,6 +35,17 @@ A marketing team is testing a **new Ad Creative (Treatment)** against the **exis
 
 ## 🏗️ Architecture & Data Flow
 
+graph LR
+    A[Python Script] -->|Generates CSV| B(Raw Data)
+    B -->|Ingest| C{Airflow DAG}
+    C -->|Load| D[(Postgres DB)]
+    D -->|Transform| E[dbt Staging]
+    E -->|Aggregate| F[dbt Marts]
+    F -->|Analyze| G[Significance Check]
+    style C fill:#ff9900,stroke:#333,stroke-width:2px
+    style D fill:#336791,stroke:#333,stroke-width:2px
+    style F fill:#00c7b7,stroke:#333,stroke-width:2px
+
 1. **Data Generation**
 
    * Python script generates 500k synthetic clickstream events
@@ -76,7 +87,7 @@ A marketing team is testing a **new Ad Creative (Treatment)** against the **exis
 ### 2️⃣ Install Dependencies
 
 ```bash
-pip install pandas numpy scipy sqlalchemy psycopg2-binary dbt-core dbt-postgres
+pip install -r requirements.txt
 ```
 
 ---
