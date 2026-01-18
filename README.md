@@ -35,42 +35,43 @@ A marketing team is testing a **new Ad Creative (Treatment)** against the **exis
 
 ## 🏗️ Architecture & Data Flow
 
+The pipeline follows a modern ELT-based analytics architecture, orchestrated end-to-end using Airflow and dbt.
+
+```mermaid
 graph LR
-    A[Python Script] -->|Generates CSV| B(Raw Data)
+    A[Python Script] -->|Generates CSV| B[Raw Data]
     B -->|Ingest| C{Airflow DAG}
     C -->|Load| D[(Postgres DB)]
     D -->|Transform| E[dbt Staging]
     E -->|Aggregate| F[dbt Marts]
-    F -->|Analyze| G[Significance Check]
+    F -->|Analyze| G[Statistical Significance Check]
+
     style C fill:#ff9900,stroke:#333,stroke-width:2px
     style D fill:#336791,stroke:#333,stroke-width:2px
     style F fill:#00c7b7,stroke:#333,stroke-width:2px
+```
+
+### Step-by-Step Flow
 
 1. **Data Generation**
 
-   * Python script generates 500k synthetic clickstream events
-   * Controlled conversion rates:
-
-     * Control: `15%`
-     * Treatment: `18%`
+   * A Python script generates 500,000+ synthetic clickstream events
+   * Conversion probabilities are controlled to simulate realistic A/B test behavior
 
 2. **Ingestion (EL)**
 
-   * Airflow DAG (`load_ad_data_v1`) creates schema and loads raw CSV into Postgres
+   * Airflow orchestrates schema creation and raw CSV ingestion into Postgres
+   * Designed to be idempotent and re-runnable
 
 3. **Transformation (T)**
 
-   * dbt staging models clean and type-cast raw data
-   * dbt mart aggregates metrics by experiment group
+   * dbt staging models clean, type-cast, and validate raw data
+   * dbt mart models aggregate metrics at the experiment group level
 
-4. **Statistical Analysis**
+4. **Analysis**
 
-   * Python script calculates:
-
-     * Conversion rates
-     * Z-score
-     * P-value
-   * Automatically determines experiment winner
+   * Final Python script calculates conversion rates, Z-score, and P-value
+   * Automatically determines whether the treatment outperformed the control
 
 ---
 
